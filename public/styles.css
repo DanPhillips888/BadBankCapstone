@@ -1,0 +1,23 @@
+body {
+    background-image: url("./background.gif");
+    background-attachment: fixed;
+    background-position: center; 
+    /* opacity: 0.3; */
+}
+
+/* Card Styling */
+
+.card {
+    margin: auto;
+    
+}
+
+.link {
+    position: absolute;
+    text-align: center;
+    margin: auto;
+}
+
+.navbar {
+    margin-bottom: 10px;
+}

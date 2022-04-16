@@ -6,6 +6,7 @@ function Withdraw() {
     }
 
     return (
+        <>
         <Card
             bgcolor="warning"
             header="Withdraw Amount"
@@ -17,6 +18,10 @@ function Withdraw() {
             submitButtonWithdraw="Withdrawl Successful"
         />
 
+        <Link to="/">
+          <button type="submit">Home</button>
+        </Link>
+        </>
     )
 }
 

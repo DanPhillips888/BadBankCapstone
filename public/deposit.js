@@ -8,12 +8,18 @@ function Deposit() {
   }
 
   return (
+    <>
       <Card
         bgcolor="primary"
         header="Deposit"
         deposit={handle}
         submitButtonDeposit="Deposit Successful"
       />
+
+        <Link to="/">
+          <button type="submit">Home</button>
+        </Link>
+        </>
   )
 }
 

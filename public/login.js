@@ -7,6 +7,7 @@ function Login() {
     }
 
     return (
+        <>
         <Card
             bgcolor="success"
             header="Login to Account"
@@ -14,5 +15,12 @@ function Login() {
             submitButtonLogin="Login Successful"
             status={status}
         />
+
+        <Link to="/">
+          <div className="link">
+            <button type="submit">Home</button>
+          </div>
+        </Link>
+        </>
     )
 }

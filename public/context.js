@@ -9,13 +9,20 @@ function Card(props){
     const [name, setName]          = React.useState('');
     const [email, setEmail]        = React.useState('');
     const [password, setPassword]  = React.useState('');
-    const [balance, setBalance]    = React.useState(0);
+    // const [balance, setBalance]    = React.useState(0);
     // using amount for quicker logic using backend
     const [amount, setAmount]     = React.useState(0);
+
+    // context for tracking current User and logged in status
     const ctx = React.useContext(UserContext);
     // from context being cleared and filled with login user this will be their info
     // currently logged in user
     const user = ctx.user[0];
+    var transactionIsWithdraw = ctx.transactionType.withdraw;
+    // var loginStatus = ctx.login.isLoggedIn;
+    console.log(ctx);
+    // console.log(user.name);
+    // console.log(loginStatus);
 
     // validation function used in handleCreate
     function validate(field, label) {
@@ -46,20 +53,6 @@ function Card(props){
       return password.length > 8;
     }
 
-    function handleCreate() {
-        console.log(name, email, password);
-        if (!validate(name,     'name'))     return;
-        if (!validate(email,    'email'))    return;
-        if (!validate(password, 'password')) return;
-        const url =`/account/create/${name}/${email}/${password}`;
-        (async () => {
-          var res  = await fetch(url);
-          var data = await res.json();
-          console.log(data);
-        })();
-        setShow(false);
-    }
-
     function clearForm() {
       setName('');
       setEmail('');
@@ -67,30 +60,92 @@ function Card(props){
       setShow(true);
     }
 
+    function handleCreate() {
+        if (!validate(name,     'name'))     return;
+        if (!validate(email,    'email'))    return;
+        if (!validate(password, 'password')) return;
+
+        const findUrl = `/account/find/${email}`;
+        (async () => {
+          var res = await fetch(findUrl);
+          var data = await res.json();
+          console.log(data);
+          if (data[0].email === email) {
+            ctx.user[0].name = null;
+            ctx.user[0].email = null;
+            ctx.user[0].password = null;
+            ctx.user[0].balance = 0;
+            ctx.login.isLoggedIn = false;
+            setShow(true);
+            alert("User already exists, please use another email");
+            return;
+          } else {
+            const url =`/account/create/${name}/${email}/${password}`;
+            (async () => {
+              var res  = await fetch(url);
+              var data = await res.json();
+              console.log(data);
+            })();
+            handleLogin();
+            setShow(false);
+
+          }
+        })();
+        console.log(name, email, password);
+        
+    }
+
+    function handleLogin() {
+      if (!validate(email,            'email'))    return;
+      if (!validatePassword(password, 'password')) return;
+      
+      const url =`/account/login/${email}/${password}`;
+      (async () => {
+        var res  = await fetch(url);
+        var userRawData = await res.json();
+        if (userRawData.error) {
+          alert(JSON.stringify(userRawData));
+          clearForm();
+          setShow(true);
+        }
+        else {
+          ctx.user.pop();
+          ctx.user.push(userRawData);
+          ctx.login.isLoggedIn = true;
+          setShow(false);
+        }
+      })();
+    }
+
     function handleTransaction() {
       if (!validate(email,       'email'))    return;
       if (!validate(amount,     'amount'))    return;
+      const url =`/account/update/${email}/${amount}`;
 
       if (email === user.email){
-        if (Number(amount) < 0) {
-          if (user.balance + amount < 0) {
+        if (transactionIsWithdraw) {
+          if (user.balance - amount < 0) {
             alert("Insufficient Funds");
             clearForm();
             setShow(true);
+          } else {
+            (async () => {
+              var res  = await fetch(url);
+              var data = await res.json();
+              console.log(data);
+              ctx.user[0].balance -= Number(amount);
+              setShow(false);
+            })();
           }
-        }
-        const url =`/account/update/${email}/${amount}`;
+        } else if (!transactionIsWithdraw) {
           (async () => {
             var res  = await fetch(url);
             var data = await res.json();
-            useEffect(() => {
-              console.log(data);
-            }, [data]);
-            setShow(false);
-            // setName(data.value.name);
-            setBalance(data.value.balance);
+            console.log(data);
             ctx.user[0].balance += Number(amount);
+            setShow(false);
           })();
+        }
       } else {
         alert(`Incorrect User input.`);
         clearForm();
@@ -113,28 +168,6 @@ function Card(props){
     //   }  
     }
 
-      function handleLogin() {
-        if (!validate(email,            'email'))    return;
-        if (!validatePassword(password, 'password')) return;
-        
-        const url =`/account/login/${email}/${password}`;
-        (async () => {
-          var res  = await fetch(url);
-          var userRawData = await res.json();
-          if (userRawData.error) {
-            alert(JSON.stringify(userRawData));
-            clearForm();
-            setShow(true);
-          }
-          else {
-            ctx.user.pop();
-            ctx.user.push(userRawData);
-            setShow(false);
-          }
-        })();
-    }
-
-
     function classes(){
       const bg  = props.bgcolor ? ' bg-' + props.bgcolor : ' ';
       const txt = props.txtcolor ? ' text-' + props.txtcolor: ' text-white';
@@ -142,6 +175,8 @@ function Card(props){
     }
   
     return (
+      <>
+      <NavBar/>
       <div className={classes()} style={{maxWidth: "18rem"}}>
           <div className="card-header">{props.header}</div>
           <div className="card-body">
@@ -183,7 +218,9 @@ function Card(props){
                   <div className="card text-white text-center bg-success mb-3">
                      <h5>Success</h5>
                   </div>
-                  <button type="submit" className="btn btn-secondary" onClick={clearForm} >{props.submitButton}</button>
+                  <Link to="/account">
+                    <button type="submit" className="btn btn-secondary">{props.submitButton}</button>
+                  </Link>
                  </>
               )
               )}
@@ -209,19 +246,20 @@ function Card(props){
                     {user.name}<br/>
                     Balance after deposit: {user.balance}<br/>
                   </div>
-                  <button type="submit" className="btn btn-secondary" onClick={clearForm} >Make another Transaction</button>
+                  <button type="submit" className="btn btn-secondary" onClick={clearForm}>Make another Transaction</button>
                   </>
                 )
               )}
               {/* Withdraw Card */}
               {props.withdraw && show ? (
                 <>
-                Balance for {user.name}'s Account: {user.balance} <br/><br/>
+                Current User: {user.name}<br/>
+                Account Balance: {user.balance} <br/><br/>
                 Confirm Account Email<br/>
                 <input type="input" className="form-control" id="email" placeholder="Enter Email" value={email} onChange={e => setEmail(e.currentTarget.value)} /><br/>
                 
                 Withdrawl Amount<br/>
-                <input type="number" className="form-control" id="amount" placeholder="Enter Withdrawl Amount" value={-amount} onChange={e => setAmount(e.currentTarget.value)} /><br/>
+                <input type="number" className="form-control" id="amount" placeholder="Enter Withdrawl Amount" value={amount} onChange={e => setAmount(e.currentTarget.value)} /><br/>
     
                 <button type="submit" className="btn btn-light" onClick={handleTransaction} >Withdrawl</button>
                 </>
@@ -240,7 +278,8 @@ function Card(props){
               {/* Login Card */}
               {props.login && show ? (
                 <>
-                Current Logged In User: {user.name}<br/>
+                Welcome to verification.<br/>
+                {!user.name ? "Please Login..." : `Current Logged In User: ${user.name}`}<br/>
                 Confirm Account Email<br/>
                 <input type="input" className="form-control" id="email" placeholder="Enter Email" value={email} onChange={e => setEmail(e.target.value)}/><br/> 
                 Enter Password<br/>
@@ -253,11 +292,24 @@ function Card(props){
                   <h5>Success</h5>
                   User {user.name} Logged In<br/>
                 </div>
-                <button type="submit" className="btn btn-secondary" onClick={clearForm} >Continue to Account</button>
+                <Link to="/account">
+                  <button type="submit" className="btn btn-secondary">Continue to Account</button>
+                </Link>
                 </>
                 )
               )}
               {/* {props.status && (<div className="alert alert-primary" role="alert" id="'createStatus">Status: {props.status}</div>)} */}
+              {/* Account Info card */}
+              {props.account && (
+                <>
+                Welcome to your BadBank account<br/><br/>
+                  User : {user.name}<br/>
+                  Email address: {user.email}<br/>
+                  Your current Balance is: {user.balance}<br/><br/>
+                  Select and action from the list above
+                </>
+              )}
+              
               {/* All Data card */}
               {props.allData && (
               <>
@@ -268,5 +320,6 @@ function Card(props){
               </>)}
           </div>
       </div>
+      </>
     );   
   }

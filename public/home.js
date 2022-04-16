@@ -1,5 +1,6 @@
 function Home() {
     return(
+        <>
         <Card
             bgcolor= "primary"
             txtcolor="black"
@@ -9,5 +10,15 @@ function Home() {
             body={(<img src="bank.png" className="img-fluid" alt="Responsive image"/>)}
             status="System Online"
         />
+        <Link to="/CreateAccount">
+          <button type="submit">Create a new Account</button>
+        </Link>
+        <br/>
+
+        <Link to="/Login">
+          <button type="submit">Go to Login</button>
+        </Link>
+        <br/>
+        </>
     )
 }
