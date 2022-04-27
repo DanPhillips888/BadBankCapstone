@@ -10,7 +10,7 @@ function Home() {
             body={(<img src="bank.png" className="img-fluid" alt="Responsive image"/>)}
             status="System Online"
         />
-        <Link to="/CreateAccount">
+        {/* <Link to="/CreateAccount">
           <button type="submit">Create a new Account</button>
         </Link>
         <br/>
@@ -18,7 +18,7 @@ function Home() {
         <Link to="/Login">
           <button type="submit">Go to Login</button>
         </Link>
-        <br/>
+        <br/> */}
         </>
     )
 }

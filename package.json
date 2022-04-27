@@ -1,10 +1,12 @@
 {
-  "name": "badbank_threetiers",
+  "name": "badbank_capstone",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node puppeteer.js"
+    "test": "node puppeteer.js",
+    "start": "node index.js",
+    "build": "node run build"
   },
   "keywords": [],
   "author": "",

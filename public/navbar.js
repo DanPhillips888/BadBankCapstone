@@ -12,6 +12,7 @@ function NavBar() {
       ctx.user[0].balance = 0;
       ctx.login.isLoggedIn = false;
       // console.log(user);
+      window.location.href="#/"
     };
 
     function transactionChange() {
@@ -26,38 +27,37 @@ function NavBar() {
               <span className="navbar-toggler-icon"></span>
             </button>
             <div className="collapse navbar-collapse" id="navbarNav">
-              <ul className="navbar-nav">
 
                 {loginStatus ? 
                 (
-                <>
-                <li className="nav-item">
-                  <a className="nav-link" href="#/account/">Account</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#/deposit/">Deposit</a> 
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#/withdraw" onClick={transactionChange}>Withdraw</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#/allData/">All Data</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link ml-auto" href="#/" onClick={logout}>Log Out</a>
-                </li>
-                </>
-                ) : (<>
+                  <>
+                <ul className="navbar-nav">
                   <li className="nav-item">
-                  <a className="nav-link" href="#/CreateAccount/">Create Account</a>
-                </li>
-                <li className="nav-item">
-                  <a className="nav-link" href="#/login/">Login</a>
-                </li>
+                    <a className="nav-link" href="#/account/">Account</a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link" href="#/deposit/">Deposit</a> 
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link" href="#/withdraw" onClick={transactionChange}>Withdraw</a>
+                  </li>
+                  <li className="nav-item">
+                    <a className="nav-link" href="#/allData/">All Data</a>
+                  </li>
+                  </ul>
+                    <span className="navbar-text ml-auto">Logged In User: {user.name}</span>
+                    <button className="btn btn-outline-success ml-auto" onClick={logout}>Log Out</button>
+                </>
+                ) : (
+                <>
+                  <ul className="navbar-nav">
+                    <li className="nav-item">
+                      <a className="nav-link" href="#/CreateAccount/">Create Account</a>
+                    </li>
+                  </ul>                    
+                    <button className="btn btn-outline-success ml-auto" onClick={()=> window.location.href="#/login/"}>Login</button>
                 </>
                 )}
-
-              </ul>
             </div>
         </nav>
     );

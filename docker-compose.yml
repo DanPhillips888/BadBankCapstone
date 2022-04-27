@@ -1,0 +1,24 @@
+version: '2'
+
+services: 
+    badbank-app:
+        container_name: badbankcapstone
+        image: badbankcapstone:latest
+        build: .
+        ports:
+          - "8080:8080"
+        links: 
+          - mongo
+
+    mongo: 
+      container_name: mongobadbank
+      image: mongo
+      restart: unless-stopped
+      # env_file: .env
+      # environment:
+      #   MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      #   MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      volumes: 
+        - ./data:data/db
+      ports:
+        - "27017:27017"

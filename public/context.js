@@ -9,9 +9,8 @@ function Card(props){
     const [name, setName]          = React.useState('');
     const [email, setEmail]        = React.useState('');
     const [password, setPassword]  = React.useState('');
-    // const [balance, setBalance]    = React.useState(0);
     // using amount for quicker logic using backend
-    const [amount, setAmount]     = React.useState(0);
+    const [amount, setAmount]      = React.useState(0);
 
     // context for tracking current User and logged in status
     const ctx = React.useContext(UserContext);
@@ -19,8 +18,9 @@ function Card(props){
     // currently logged in user
     const user = ctx.user[0];
     var transactionIsWithdraw = ctx.transactionType.withdraw;
+    
     // var loginStatus = ctx.login.isLoggedIn;
-    console.log(ctx);
+    // console.log(ctx);
     // console.log(user.name);
     // console.log(loginStatus);
 
@@ -65,21 +65,14 @@ function Card(props){
         if (!validate(email,    'email'))    return;
         if (!validate(password, 'password')) return;
 
+        // check if user email exists
         const findUrl = `/account/find/${email}`;
         (async () => {
           var res = await fetch(findUrl);
           var data = await res.json();
           console.log(data);
-          if (data[0].email === email) {
-            ctx.user[0].name = null;
-            ctx.user[0].email = null;
-            ctx.user[0].password = null;
-            ctx.user[0].balance = 0;
-            ctx.login.isLoggedIn = false;
-            setShow(true);
-            alert("User already exists, please use another email");
-            return;
-          } else {
+          // no matching email found: create
+          if (data.length === 0) {
             const url =`/account/create/${name}/${email}/${password}`;
             (async () => {
               var res  = await fetch(url);
@@ -88,8 +81,20 @@ function Card(props){
             })();
             handleLogin();
             setShow(false);
-
+            return;
           }
+          // user already exists
+          if (data[0].email === email) {
+            ctx.user[0].name = null;
+            ctx.user[0].email = null;
+            ctx.user[0].password = null;
+            ctx.user[0].balance = 0;
+            ctx.login.isLoggedIn = false;
+            setShow(true);
+            alert("User already exists, please use another email");
+            clearForm();
+            return;
+          } 
         })();
         console.log(name, email, password);
         
@@ -120,24 +125,26 @@ function Card(props){
     function handleTransaction() {
       if (!validate(email,       'email'))    return;
       if (!validate(amount,     'amount'))    return;
-      const url =`/account/update/${email}/${amount}`;
 
       if (email === user.email){
-        if (transactionIsWithdraw) {
+        if (transactionIsWithdraw === true) {
           if (user.balance - amount < 0) {
             alert("Insufficient Funds");
             clearForm();
             setShow(true);
           } else {
+            var withdrawAmount = Number(amount) * -1;
+            const url =`/account/update/${email}/${withdrawAmount}`;
             (async () => {
               var res  = await fetch(url);
               var data = await res.json();
               console.log(data);
-              ctx.user[0].balance -= Number(amount);
+              ctx.user[0].balance += withdrawAmount;
               setShow(false);
             })();
           }
-        } else if (!transactionIsWithdraw) {
+        } else if (transactionIsWithdraw === false) {
+          const url =`/account/update/${email}/${amount}`;
           (async () => {
             var res  = await fetch(url);
             var data = await res.json();
@@ -150,22 +157,6 @@ function Card(props){
         alert(`Incorrect User input.`);
         clearForm();
       }
-        
-  //  refactoring withdraw... need login first
-    //   if (name === userName){
-    //       if ((Number(withdraw)) <= balance) {
-    //           console.log(name, `Withdrawl amount: ${withdraw}`);
-    //           //ctx.users.push({withdraw});
-    //           req.params.balance -= Number(withdraw);
-    //           setShow(false);
-    //       } else {
-    //           alert("Insufficient Funds");
-    //           return;
-    //       }
-    //   } else {
-    //       alert(`Incorrect User input.`);
-    //       clearForm();
-    //   }  
     }
 
     function classes(){
@@ -306,7 +297,7 @@ function Card(props){
                   User : {user.name}<br/>
                   Email address: {user.email}<br/>
                   Your current Balance is: {user.balance}<br/><br/>
-                  Select and action from the list above
+                  Select and action from the menu above
                 </>
               )}
               
