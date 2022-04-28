@@ -1,24 +1,27 @@
-version: '2'
+version: "3.7"
 
-services: 
-    badbank-app:
-        container_name: badbankcapstone
-        image: badbankcapstone:latest
-        build: .
-        ports:
-          - "8080:8080"
-        links: 
-          - mongo
+services:
+  app:
+    image: node:14
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - 3000:3000
+    working_dir: /app
+    volumes:
+      - ./:/app
+    environment:
+      MONGODB_HOST: mongodb
+      MONGODB_USER: root
+      MONGODB_PASSWORD: secret
+      MONGODB_DB: bank
 
-    mongo: 
-      container_name: mongobadbank
-      image: mongo
-      restart: unless-stopped
-      # env_file: .env
-      # environment:
-      #   MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      #   MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
-      volumes: 
-        - ./data:data/db
-      ports:
-        - "27017:27017"
+  mongodb:
+    image: mongo
+    volumes:
+      - bank-mongodb-data:/var/lib/mongodb
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME: badbank
+      - MONGO_INITDB_ROOT_PASSWORD: database
+
+volumes:
+  bank-mongodb-data:
