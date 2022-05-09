@@ -9,7 +9,6 @@ function Card(props){
     const [name, setName]          = React.useState('');
     const [email, setEmail]        = React.useState('');
     const [password, setPassword]  = React.useState('');
-    // using amount for quicker logic using backend
     const [amount, setAmount]      = React.useState(0);
 
     // context for tracking current User and logged in status
@@ -18,11 +17,6 @@ function Card(props){
     // currently logged in user
     const user = ctx.user[0];
     var transactionIsWithdraw = ctx.transactionType.withdraw;
-    
-    // var loginStatus = ctx.login.isLoggedIn;
-    // console.log(ctx);
-    // console.log(user.name);
-    // console.log(loginStatus);
 
     // validation function used in handleCreate
     function validate(field, label) {
@@ -79,7 +73,10 @@ function Card(props){
               var data = await res.json();
               console.log(data);
             })();
-            handleLogin();
+            // Login once created
+            (async () => {
+              handleLogin();
+            })(data);
             setShow(false);
             return;
           }
@@ -160,14 +157,13 @@ function Card(props){
     }
 
     function classes(){
-      const bg  = props.bgcolor ? ' bg-' + props.bgcolor : ' ';
-      const txt = props.txtcolor ? ' text-' + props.txtcolor: ' text-white';
-      return 'card text-center mb-3 ' + bg + txt;
+        const bg  = props.bgcolor ? ' bg-' + props.bgcolor : ' ';
+        const txt = props.txtcolor ? ' text-' + props.txtcolor: ' text-white';
+        return 'card text-center mb-3 ' + bg + txt;
     }
   
     return (
       <>
-      <NavBar/>
       <div className={classes()} style={{maxWidth: "18rem"}}>
           <div className="card-header">{props.header}</div>
           <div className="card-body">
@@ -310,7 +306,7 @@ function Card(props){
                 Balance: {props.allData[3]}<br/>
               </>)}
           </div>
-      </div>
+        </div>
       </>
     );   
   }

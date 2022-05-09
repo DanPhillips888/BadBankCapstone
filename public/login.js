@@ -8,6 +8,7 @@ function Login() {
 
     return (
         <>
+        <NavBar/>
         <Card
             bgcolor="success"
             header="Login to Account"

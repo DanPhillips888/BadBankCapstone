@@ -15,8 +15,12 @@ function NavBar() {
       window.location.href="#/"
     };
 
-    function transactionChange() {
+    function transactionWithdraw() {
       ctx.transactionType.withdraw = true;
+    }
+
+    function transactionDeposit() {
+      ctx.transactionType.withdraw = false;
     }
     
     return(
@@ -36,10 +40,10 @@ function NavBar() {
                     <a className="nav-link" href="#/account/">Account</a>
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link" href="#/deposit/">Deposit</a> 
+                    <a className="nav-link" href="#/deposit/" onClick={transactionDeposit}>Deposit</a> 
                   </li>
                   <li className="nav-item">
-                    <a className="nav-link" href="#/withdraw" onClick={transactionChange}>Withdraw</a>
+                    <a className="nav-link" href="#/withdraw" onClick={transactionWithdraw}>Withdraw</a>
                   </li>
                   <li className="nav-item">
                     <a className="nav-link" href="#/allData/">All Data</a>

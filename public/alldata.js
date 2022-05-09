@@ -5,7 +5,7 @@ function AllData() {
 
     // React hook
     React.useEffect(() => {
-      // fetch all accounts from API
+      // fetch all accounts from DB
       fetch('/account/all')
           .then(response => response.json())
           .then(data => {
@@ -16,7 +16,7 @@ function AllData() {
     console.log(data);
 
     function userNumber(i) {
-      return (`User Account ${i+1} Table`);
+      return (`User Account ${i+1} Summary`);
     }
 
     function userInfo(user) {
@@ -26,18 +26,21 @@ function AllData() {
     if (data) {
       return (
         <>
-        <h5>All data store</h5>
-        {data.map((user, i) => (
-          <Card
-          index = {i}
-          key = {i} 
-          bgcolor="info"
-          txtcolor="white"
-          header="All data Summary"
-          text={userNumber(i)}
-          allData={userInfo(user)}
-          /> )
-        )}
+        <NavBar/>
+        <h5>Admin View Only: All data store</h5>
+        <div className="row row-cols-1 row-cols-md-3 g-4">
+          {data.map((user, i) => (
+            <Card
+            index = {i}
+            key = {i} 
+            bgcolor="info"
+            txtcolor="white"
+            header={userNumber(i)}
+            // text={userNumber(i)}
+            allData={userInfo(user)}
+            /> )
+          )}
+        </div>
         </>
       )
     }

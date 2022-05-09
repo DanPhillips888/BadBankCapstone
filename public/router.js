@@ -17,7 +17,6 @@ function Spa() {
                           withdraw: false
                       }
                     }}>
-                    {/* <NavBar/> */}
                     <div className="container" style={{padding: "20px"}}>
                         <Route path="/" exact component={Home} />
                         <Route path="/CreateAccount/" component={CreateAccount} />

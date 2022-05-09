@@ -7,6 +7,7 @@ function AccountDetails() {
 
     return (
         <>
+        <NavBar/>
         <Card
             bgcolor="success"
             header="Account"

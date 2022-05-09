@@ -1,5 +1,7 @@
 FROM node:14
 
+ENV PORT 8080
+
 # Step 4.1 - Add container working directory
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app

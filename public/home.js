@@ -1,6 +1,7 @@
 function Home() {
     return(
         <>
+        <NavBar/>
         <Card
             bgcolor= "primary"
             txtcolor="black"
