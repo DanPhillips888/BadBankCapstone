@@ -7,6 +7,7 @@ function CreateAccount() {
 
     return (
       <>
+      <NavBar/>
         <Card
             bgcolor="primary"
             header="Create Account"

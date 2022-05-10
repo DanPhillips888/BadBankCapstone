@@ -5,9 +5,6 @@ services:          # 1 service = 1 container.
   frontend_service:              # First service (container). Free to choose a keyword (the service name)
     # Run the service using an existing image or using a Dockerfile
     
-    # From an existing image
-    # image: "badbankcapstone"       # image name with the version
-    
     # From a Dockerfile
     build: ./          # path of the Dockerfile to build the image
     # If you specify image as well as build, then Compose names the built image specified in 'image':
