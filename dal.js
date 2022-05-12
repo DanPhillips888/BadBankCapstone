@@ -1,6 +1,7 @@
 const MongoClient = require('mongodb').MongoClient;
 // const url         = 'mongodb://localhost:27017';
-const url         = `mongodb://badbank:dockerdeploy@db_service:27017`;
+// const url         = `mongodb://badbank:dockerdeploy@db_service:27017`;
+const url         = `mongodb+srv://doapps-b3b0c9ad-b89f-4ba4-9555-537c020d879f:PB9230V7fj4A15cE@db-mongobadbank-d677ec50.mongo.ondigitalocean.com/admin?authSource=admin&tls=true`;
 let db            = null;
 
 // connect to mongo
