@@ -15,9 +15,10 @@ at the commnad line cd into the folder run:
   > npm install
 
 with docker running on your local machine build a new image for the backend with:
-   >docker run --name badbank -d
+  >docker run --name badbank -d
 
-from the local folder run> node index.js
+from the local folder run:
+  > node index.js
 
 This runs the front end locally at port 8080 and will connect with the backend running in the container on port 27017.
 
