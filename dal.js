@@ -1,21 +1,36 @@
+require("dotenv").config();
+
 const MongoClient = require('mongodb').MongoClient;
 // const url         = 'mongodb://localhost:27017';
-// const url         = `mongodb://badbank:dockerdeploy@db_service:27017`;
-const url         = `mongodb+srv://doapps-b3b0c9ad-b89f-4ba4-9555-537c020d879f:PB9230V7fj4A15cE@db-mongobadbank-d677ec50.mongo.ondigitalocean.com/admin?authSource=admin&tls=true`;
+
 let db            = null;
 
-// connect to mongo
-MongoClient.connect(url, {useUnifiedTopology: true}, function(err, client) {
-    console.log("Connected successfully to db server");
+// connect to mongo with async call
+let cachedClient = null;
+let cachedDb = null;
+async function connectToDatabase() {
+    if (cachedDb) return cachedDb;
 
+    const client = await MongoClient.connect(process.env.DATABASE_URL, { 
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+        tls: true,
+        tlsCAFile: "./ca-certificate.crt",
+    });
+    console.log("Connected successfully to db server");
     // connect to my project database
     db = client.db('myproject');
-});
+
+    cachedClient = client;
+    cachedDb = db;
+    return db;
+}
 
 // create user account
 function create(name, email, password) {
-    return new Promise((resolve, reject) => {
-        const collection = db.collection('users');
+    return new Promise(async (resolve, reject) => {
+        const db = await connectToDatabase();
+        const collection = await db.collection('users');
         const doc = {name, email, password, balance: 0};
         collection.insertOne(doc, {w:1}, function(err, result) {
             err ? reject(err) : resolve(doc);
@@ -25,20 +40,22 @@ function create(name, email, password) {
 
 // find user account 
 function find(email) {
-    return new Promise((resolve, reject) => {
-        const customers = db
-            .collection('users')
-            .find({ email: email })
-            .toArray(function (err, docs) {
-                err ? reject(err) : resolve(docs);
-            });
-    })
+        return new Promise(async (resolve, reject) => {
+            const db = await connectToDatabase();
+            const customers = await db
+                .collection('users')
+                .find({ email: email })
+                .toArray(function (err, docs) {
+                    err ? reject(err) : resolve(docs);
+                });
+        })
 }
 
 // find user account
 function findOne(email) {
-    return new Promise((resolve, reject) => {
-        const customers = db
+    return new Promise(async (resolve, reject) => {
+        const db = await connectToDatabase();
+        const customers = await db
             .collection('users')
             .findOne({ email: email })
             .then((doc) => resolve(doc))
@@ -48,8 +65,9 @@ function findOne(email) {
 
 // update - deposit/withdraw amount
 function update(email, amount) {
-    return new Promise((resolve, reject) => {
-        const customer = db
+    return new Promise(async (resolve, reject) => {
+        const db = await connectToDatabase();
+        const customer = await db
             .collection('users')
             .findOneAndUpdate(
                 { email: email },
@@ -64,8 +82,9 @@ function update(email, amount) {
 
 // all users
 function all() {
-    return new Promise((resolve, reject) => {
-        const customers = db
+    return new Promise(async (resolve, reject) => {
+        const db = await connectToDatabase();
+        const customers = await db
             .collection('users')
             .find({})
             .toArray(function(err, docs) {
