@@ -4,9 +4,8 @@ Full three tiered banking demo
 The current project can be found at https://badbank-app-uk8cl.ondigitalocean.app/#/ where it is packaged in a Docker container 
 and deployed to Digital Ocean as a web app with persistent database running on the cloud. 
 
-This assignment was to submit a fully deployed app however, the application can be run locally for testing.
-It is a three tiered banking application with a database storing client login and account info.
-It is currently being developed to run in Docker containers and be depolyed to a cloud service.
+This assignment was to submit a fully deployed app however, the application can also be run locally for testing.
+It is a three tiered banking application with a front end UI, a Data Abstraction Layer and a database storing client login and account info.
 
 ## Local RUN Instructions:
 Download the files into a local folder
