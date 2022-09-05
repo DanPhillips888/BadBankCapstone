@@ -8,7 +8,7 @@ This assignment was to submit a fully deployed app however, the application can 
 It is a three tiered banking application with a front end UI, a Data Abstraction Layer and a database storing client login and account info.
 
 ## Local RUN Instructions:
-Download the files into a local folder
+Download the files into a local folder and ensure you have Node package manager installed.
 
 at the commnad line cd into the folder run:
   > npm install
